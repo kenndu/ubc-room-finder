@@ -1,32 +1,4 @@
 
-def combineTime(first,second):
-    test = first[:]
-    test2 = second[:]
-
-    count1 = len(test)
-    count2 = len(test2)
-
-    if ":" not in test or ":" not in test2:
-        return test + test2
-
-    if count2 == 0 or count1 == 0:
-        return test + test2
-
-    endtime = test[count1-1]
-    start2 = test2[0]
-    (h,m) = endtime.split(':')
-    (h2,m2) = start2.split(':')
-
-    t1 =  int(h) * 3600 + int(m)*60
-    t2 = int(h2) * 3600 + int(m2)*60
-
-    if t2 <= t1:
-        z = test.pop(count1-1)
-        g = test2.pop(0)
-    
-    return test + test2
-
-
 f = open('test.txt')
 
 result = open('result.txt','w')
@@ -57,11 +29,14 @@ while f:
             line = f.readline()
         time_range.append(line[4:-6])
         line = f.readline()
-        time_range.append(line[4:-6])    
-        finalStr = room + '.'+ current_day + '.' + '["' + '","'.join(time_range) + '"]'
-        result.write(finalStr + "\n")
+        time_range.append(line[4:-6])
+        if len(room) != 0:    
+            finalStr = room + '.'+ current_day + '.' + '["' + '","'.join(time_range) + '"]'
+            result.write(finalStr + "\n")
         f.flush()
         result.flush()
+    if len(line) == 0:
+        break
 
 f.close()
 result.close()
