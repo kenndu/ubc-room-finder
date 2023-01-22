@@ -1,7 +1,6 @@
 const fs = require('fs');
 const readline = require('readline');
 const { Client } = require('pg');
-const { CLIENT_LONG_PASSWORD } = require('mysql/lib/protocol/constants/client');
 
 const client = new Client({
     user: "postgres",
@@ -24,8 +23,6 @@ async function processLineByLine() {
         input: fileStream,
         crlfDelay: Infinity
     });
-    // Note: we use the crlfDelay option to recognize all instances of CR LF
-    // ('\r\n') in input.txt as a single line break.
   
     for await (const line of rl) {
         // Each line in input.txt will be successively available here as `line`.
@@ -38,9 +35,11 @@ async function processLineByLine() {
         let query = 'SELECT COUNT(*) FROM schedule WHERE room = $1';
         let room = [arr[0]];
 
+        // see if theres already an entry for this room in the DB
         // eslint-disable-next-line no-loop-func
         client.query(query, room, (err, res) => {
             if (!err) {
+                //if not, create a new entry for that room
                 if (res.rows[0]['count'] == 0) {
                     console.log(res.rows[0]['count']);
                     
@@ -56,6 +55,8 @@ async function processLineByLine() {
                         }
                     })
 
+                // otherwise, update the existing entry
+                // TODO: make combining logic for time intervals 
                 } else {
                     let updateQuery = 'UPDATE schedule SET ' + arr[1] + ' = $1 WHERE room = $2';
                     let updateParams = [arr[2], arr[0]];
@@ -74,6 +75,7 @@ async function processLineByLine() {
             }
         })
 
+        //give the DB time to write the changes
         await sleep(200)
     }
 
