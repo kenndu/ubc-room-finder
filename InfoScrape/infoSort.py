@@ -68,6 +68,6 @@ with open('result.txt', 'r') as fp:
 
 f = open('final.txt','w')
 for diction in sortedData:
-    f.write(diction + '.["' + '","'.join(sortedData[diction]) + ']' + '\n')
+    f.write(diction + '.["' + '","'.join(sortedData[diction]) + '"]\n' )
     
 
