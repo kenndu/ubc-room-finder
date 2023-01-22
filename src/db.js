@@ -1,21 +1,11 @@
-const {Client} = require('pg')
+const Pool = require('pg').Pool;
 
-const client = new Client({
-    host: "localhost",
+const pool = new Pool({
     user: "postgres",
-    port: 5432,
     password: "root",
+    host: "localhost",
+    port: 5432,
     database: "postgres"
-})
+});
 
-client.connect();
-
-client.query(`SELECT * FROM schedule`, (err, res) => {
-    if (!err) {
-        console.log(res.rows);
-    } else {
-        console.log(err.message);
-    }
-
-    client.end();
-})
+module.exports = pool;
